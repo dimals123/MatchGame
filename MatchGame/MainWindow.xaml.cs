@@ -14,7 +14,11 @@ namespace MatchGame
     {
         DispatcherTimer timer = new DispatcherTimer();
         int tenthsOfSecondsElapsed;
+        int tenthsOfSecondsReverse;
         int matchesFound;
+        int bestTimeOfSeconds = 0;
+        bool isGameOver;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -26,17 +30,30 @@ namespace MatchGame
         private void Timer_Tick(object? sender, EventArgs e)
         {
             tenthsOfSecondsElapsed++;
-            timeTextBlock.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s");
-            if(matchesFound == 8)
+            tenthsOfSecondsReverse++;
+            reverseTimeTextBlock.Text = GetReverseTimeToString(tenthsOfSecondsReverse);
+            timeTextBlock.Text = GetTimeToString(tenthsOfSecondsElapsed);
+
+            if (tenthsOfSecondsReverse == 20 || matchesFound == 8)
             {
                 timer.Stop();
-                timeTextBlock.Text = timeTextBlock.Text + " - Play again?";
+                timeTextBlock.Text = timeTextBlock.Text + " -  Play again?";
+                isGameOver = true;
+            }
+
+            if(matchesFound == 8)
+            {
+                if (bestTimeOfSeconds == 0 || bestTimeOfSeconds > tenthsOfSecondsElapsed)
+                    bestTimeTextBlock.Text = GetTimeToString(tenthsOfSecondsElapsed);
             }
         }
 
+        private string GetReverseTimeToString(int seconds) => (2 - (seconds / 10F)).ToString("0.0s");
+        private string GetTimeToString(int seconds) => (seconds / 10F).ToString("0.0s");
+
         private void SetUpGame()
         {
-            List<string> animalEmoji = new List<string>()
+            List<string> allAnimalEmoji = new List<string>()
             {
                 "🦍", "🦍",
                 "🐒", "🐒",
@@ -45,13 +62,28 @@ namespace MatchGame
                 "🐎", "🐎",
                 "🐄", "🐄",
                 "🐃", "🐃",
-                "🦏", "🦏"
+                "🦏", "🦏",
+                "🐐", "🐐",
+                "🦨", "🦨",
+                "🐘", "🐘",
+                "🐁", "🐁"
             };
 
             Random random = new Random();
+            List<string> animalEmoji = new List<string>();
+            
+            for(int i = 0; i < 8; i++)
+            {
+                var randomNumber = random.Next(allAnimalEmoji.Count);
+                int index = randomNumber % 2 == 1 ? randomNumber - 1 : randomNumber;
+                animalEmoji.Add(allAnimalEmoji[index]);
+                animalEmoji.Add(allAnimalEmoji[index + 1]);
+                allAnimalEmoji.RemoveRange(index, 2);
+            }
+
             foreach (TextBlock textBlock in mainGrid.Children.OfType<TextBlock>())
             {
-                if(textBlock.Name != "timeTextBlock")
+                if (string.IsNullOrEmpty(textBlock.Name))
                 {
                     textBlock.Visibility = Visibility.Visible;
                     int index = random.Next(animalEmoji.Count);
@@ -64,6 +96,8 @@ namespace MatchGame
             timer.Start();
             tenthsOfSecondsElapsed = 0;
             matchesFound = 0;
+            tenthsOfSecondsReverse = 0;
+            isGameOver = false;
         }
 
         TextBlock lastTextBlockClicked;
@@ -84,6 +118,7 @@ namespace MatchGame
                 textBlock.Visibility = Visibility.Hidden;
                 findingMatch = !findingMatch;
                 matchesFound++;
+                tenthsOfSecondsReverse = 0;
             }
             else
             {
@@ -94,7 +129,7 @@ namespace MatchGame
 
         private void timeTextBlock_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (matchesFound == 8)
+            if (isGameOver)
             {
                 SetUpGame();
             }

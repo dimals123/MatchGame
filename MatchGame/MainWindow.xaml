@@ -40,6 +40,8 @@
         <TextBlock Grid.Column="3" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" FontSize="36" Text="?" MouseDown="TextBlock_MouseDown"/>
         <TextBlock Grid.Column="3" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" FontSize="36" Text="?" MouseDown="TextBlock_MouseDown"/>
         <TextBlock x:Name="timeTextBlock" HorizontalAlignment="Center" Grid.Row="4" TextWrapping="Wrap" Text="Elapsed Time" VerticalAlignment="Center" FontSize="36" Grid.ColumnSpan="4" MouseDown="timeTextBlock_MouseDown"/>
+        <TextBlock x:Name="bestTimeTextBlock" HorizontalAlignment="Center" Margin="0,39,0,0" Grid.Row="4" TextWrapping="Wrap" Text="Best Time" VerticalAlignment="Top"/>
+        <TextBlock x:Name="reverseTimeTextBlock" Grid.Column="3" HorizontalAlignment="Left" Margin="17,36,0,0" Grid.Row="4" TextWrapping="Wrap" Text="Reverse Time" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
